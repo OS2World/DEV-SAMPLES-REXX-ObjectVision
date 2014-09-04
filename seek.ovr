@@ -1,0 +1,52 @@
+/* seek and scan files */
+                                       /* register the rexxutil pkg  */
+if rxfuncadd('SysLoadFuncs', 'REXXUTIL', 'SysLoadFuncs') = 0 then
+  call sysloadfuncs
+parse arg filespec, text               /* get the file name and text */
+if filespec = '' then do               /* no name?                   */
+                                       /* display an error message   */
+  call rxmessagebox "A file name must be specified","Seek and Scan", "OK", "Error"
+  exit
+end
+                                       /* search for the file        */
+call sysfiletree filespec, 'list.', 'FOS'
+if list.0 = 0 then do                  /* nothing found?             */
+                                       /* give an error              */
+  call rxmessagebox "No files were found matching '"filespec"'","Seek and Scan" , "OK", "Information"
+  exit
+end
+
+                                       /* delete existing file list  */
+if stream('filelist.dat','C', 'QUERY EXISTS') <> '' then do
+  if sysfiledelete("filelist.dat") <> 0 then do
+    '@CLOSE("FileList")'
+    call sysfiledelete "filelist.dat"
+  end
+end
+
+if text = '' then do                   /* not a text search?         */
+  do i=1 to list.0                     /* return the entire list     */
+    call lineout "filelist.dat", list.i
+  end
+end
+else do                                /* need to search each file   */
+  match = 0                            /* no matches yet             */
+  do i=1 to list.0
+                                       /* search for the text        */
+    call sysfilesearch text, list.i, 'lines.', 'N'
+    if lines.0 <> 0 then do            /* found something?           */
+                                       /* add to the list            */
+      call lineout "filelist.dat", list.i
+      match = match + 1                /* step the match count       */
+    end
+  end
+  if match = 0 then do                 /* nothing found?             */
+                                       /* give an error              */
+    call rxmessagebox "No files were found containing '"text"'","Seek and Scan" , "OK", "Information"
+    exit
+  end
+end
+                                       /* close the file             */
+call stream "filelist.dat", "c", "close"
+'@ASCIIOPEN("FileList", "filelist.dat", "Located files", 0)'
+

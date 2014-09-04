@@ -1,0 +1,25 @@
+/* Create a new associated type */
+                                       /* register the rexxutil pkg  */
+if rxfuncadd('SysLoadFuncs', 'REXXUTIL', 'SysLoadFuncs') = 0 then
+  call sysloadfuncs
+parse arg type                         /* get the new type           */
+type = strip(type)                     /* strip blanks for safety    */
+                                       /* add the new type           */
+call sysini 'user', 'PMWP_ASSOC_TYPE', type
+                                       /* delete existing type list  */
+if stream('typelist.dat','C', 'QUERY EXISTS') <> '' then do
+  if sysfiledelete("typelist.dat") <> 0 then do
+    '@CLOSE("TypeList")'
+    call sysfiledelete "typelist.dat"
+  end
+end
+                                       /* get the current type list  */
+call sysini 'user', 'PMWP_ASSOC_TYPE', 'all:', 'list.'
+do i=1 to list.0                       /* write the list to disk     */
+  call lineout "typelist.dat", list.i
+end
+                                       /* close the file             */
+call stream "typelist.dat", "c", "close"
+                                       /* create list box link       */
+'@ASCIIOPEN("TypeList", "typelist.dat", "Current Types", 0)'
+

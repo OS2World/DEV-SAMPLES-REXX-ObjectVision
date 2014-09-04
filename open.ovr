@@ -1,0 +1,4 @@
+/* Perform an OV Open action */
+parse arg editor, file
+address cmd 'start' editor file
+

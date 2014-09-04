@@ -1,0 +1,9 @@
+/* Rexx code for ObjectVision @REXXREGISTERALL command */
+'@REXXREGISTER("@RAND",0,"","rand.ovr",0)'
+'@REXXREGISTER("@EXECUTE",1,"CommandToExecute","execute.ovr",1)'
+'@REXXREGISTER("@WHILEFIELD",2,"""ConditionField"",""EventField""","whilefld.ovr",1)'
+'@REXXREGISTER("@WHILELOOP",2,"""ConditionExpression"",""ActionExpression""","whilelop.ovr",1)'
+'@REXXREGISTER("@SEEK",2,"","seek.ovr",1)'
+'@REXXREGISTER("@SEEKOPEN",2,"","open.ovr",1)'
+'@REXXREGISTER("@ADDTYPE",1,"","addtype.ovr",1)'
+
